@@ -1,0 +1,15 @@
+{
+  "name": "node-job-queue",
+  "version": "1.0.0",
+  "description": "Simple node job queue.",
+  "main": "index.js",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rgk/node-job-queue.git"
+  },
+  "author": "rgk",
+  "homepage": "https://github.com/rgk/node-job-queue",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {}
+}
