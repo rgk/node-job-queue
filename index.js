@@ -12,15 +12,18 @@ const output = new Map();
 +function keepGoing(start = 0) {
   if (~start) console.log([ ...output ]);
   while (start++ < input.length) {
-    processes.add(input, execFile(input, ['--queue'], (error, stdout, stderr) => {
+    processes.add(input, execFile(input[start], ['--queue'], (error, stdout, stderr) => {
       if (error) throw error;
 
-      if (stdout || stderr) output.set(input, stdout || stderr);
+      if (stdout || stderr) output.set(input[start], stdout || stderr);
 
-      processes.delete(input);
+      console.log(`{$input[start} is finished.`);
+      processes.delete(input[start]);
       keepGoing(start < input.length ? start : -1);
-    })); 
-    
+    }));
+
+    console.log(`{$input[start} is being processed.`);
+
     if (processes.size >= THREAD_COUNT) break;
   }
 }();
