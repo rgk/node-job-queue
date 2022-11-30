@@ -14,12 +14,13 @@ const output = new Map();
     try {
     while (start++ < input.length) {
       const inputFile = input[start];
+      if (!inputFile) break;
       processes.set(inputFile, execFile(inputFile, ['--queue'], (error, stdout, stderr) => {
         if (error) throw error;
 
         if (stdout || stderr) output.set(inputFile, stdout || stderr);
 
-        console.log(`{$inputFile} is finished.`);
+        console.log(`${inputFile} is currently running.`);
         processes.delete(inputFile);
         keepGoing(start < input.length ? start : -1);
       }));
