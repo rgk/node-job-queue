@@ -14,7 +14,7 @@ const output = new Map();
     try {
     while (start++ < input.length) {
       const inputFile = input[start];
-      processes.add(inputFile, execFile(inputFile, ['--queue'], (error, stdout, stderr) => {
+      processes.set(inputFile, execFile(inputFile, ['--queue'], (error, stdout, stderr) => {
         if (error) throw error;
 
         if (stdout || stderr) output.set(inputFile, stdout || stderr);
