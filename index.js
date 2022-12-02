@@ -11,12 +11,17 @@ const output = new Map();
 
 +function keepGoing(start = 0) {
   if (~start) console.log([ ...output ]);
-    try {
+  try {
     while (start++ < input.length) {
       const inputFile = input[start];
       if (!inputFile) break;
       processes.set(inputFile, execFile(inputFile, ['--queue'], (error, stdout, stderr) => {
-        if (error) throw error;
+        try {
+          if (error) throw error;
+        } catch (err) {
+          console.error(err);
+          processes.delete(inputFile);
+        }
 
         if (stdout || stderr) output.set(inputFile, stdout || stderr);
 
