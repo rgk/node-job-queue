@@ -9,34 +9,23 @@ const [ runtime, file, ...input ] = process.argv;
 const processes = new Map();
 const output = new Map();
 
-+function keepGoing(start = 0) {
-  if (~start) console.log([ ...output ]);
-  try {
-    while (start++ < input.length) {
-      const inputFile = input[start];
-      if (!inputFile) break;
-      processes.set(inputFile, execFile(inputFile, ['--queue'], (error, stdout, stderr) => {
-        try {
-          if (error) throw error;
-        } catch (err) {
-          console.error(err);
-          processes.delete(inputFile);
-        }
++function processJob(job = input.pop()) {
+  if (!job) return output;
 
-        if (stdout || stderr) output.set(inputFile, stdout || stderr);
+  console.log(job + ' started.');
+  processes.set(job, execFile(job, ['--queue'], (error, stdout, stderr) => {
+    if (error) console.error(error);
 
-        console.log(`${inputFile} is currently running.`);
-        processes.delete(inputFile);
-        keepGoing(start < input.length ? start : -1);
-      }));
+    if (stdout || stderr) output.set(job, stdout || stderr);
 
-      console.log(`{$inputFile} is being processed.`);
+    console.log(job + ' finished.');
 
-      if (processes.size >= THREAD_COUNT) break;
-    }
-  } catch(err) {
-    console.error(err);
-  }
+    processes.delete(job);
+
+    processJob();
+  }));
+
+  if (processes.size <= THREAD_COUNT) processJob();
 }();
 
 console.info(`${runtime} ${file} is currently running.`);
