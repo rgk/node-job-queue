@@ -12,13 +12,13 @@ const output = new Map();
 +function processJob(job = input.pop()) {
   if (!job) return output;
 
-  console.log(job + ' started.');
+  console.info(job + ' started.');
   processes.set(job, execFile(job, ['--queue'], (error, stdout, stderr) => {
     if (error) console.error(error);
 
     if (stdout || stderr) output.set(job, stdout || stderr);
 
-    console.log(job + ' finished.');
+    console.info(job + ' finished.');
 
     processes.delete(job);
 
