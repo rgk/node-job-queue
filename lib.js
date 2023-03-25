@@ -8,8 +8,6 @@ const processes = new Map();
 const output = new Map();
 
 export function processJob(job) {
-  if (!job) return output;
-
   console.info(job + ' started.');
   processes.set(job, execFile(job, ['--queue'], (error, stdout, stderr) => {
     if (error) console.error(error);
@@ -24,6 +22,20 @@ export function processJob(job) {
 
     processJob();
   }));
+}
 
-  if (processes.size <= THREAD_COUNT) processJob();
-};
+class JobQueue {
+  constructor(list) {
+    this.list = list;
+    this.index = 0;
+    this.output = [];
+  }
+  // Getter
+  get list() {
+    return this.list;
+  }
+  // Method
+  process() {
+    return this.output;
+  }
+}
