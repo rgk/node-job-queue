@@ -34,6 +34,10 @@ class JobQueue {
   get list() {
     return this.list;
   }
+  
+  set list(list) {
+    return this.list = list;
+  }
   // Method
   process() {
     return this.output;
