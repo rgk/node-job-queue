@@ -28,9 +28,9 @@ class JobQueue {
   constructor(list) {
     this.list = list;
     this.index = 0;
-    this.output = [];
+    this.output = new Map();
   }
-  // Getter
+
   get list() {
     return this.list;
   }
@@ -38,8 +38,14 @@ class JobQueue {
   set list(list) {
     return this.list = list;
   }
-  // Method
-  process() {
-    return this.output;
+  // Methods
+  processJob(job) {
+    execFile(job, ['--queue'], (error, stdout, stderr) => {
+      if (error) console.error(error);
+
+      if (stdout || stderr) this.output.set(job, stdout || stderr);
+
+      console.info(job + ' finished.');
+    })
   }
 }
