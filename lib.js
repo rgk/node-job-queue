@@ -30,4 +30,8 @@ class JobQueue {
       console.info(job + ' finished.');
     });
   }
+
+  queueList(list = this.list) {
+    return list;
+  }
 }
