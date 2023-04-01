@@ -24,7 +24,8 @@ class JobQueue {
 
   // Methods
   processJob(job) {
-    return execFile(job, ['--queue'], (error, stdout, stderr) => {
+    console.info(job + ' started.');
+    return execFilePromise(job, ['--queue'], (error, stdout, stderr) => {
       if (error) console.error(error);
 
       if (stdout || stderr) this.output[job] = stdout || stderr;
@@ -33,9 +34,23 @@ class JobQueue {
     });
   }
 
+  *getJob() {
+    for (let i = 0; i < this.list.length; i++) yield this.list[i];
+  }
+
+  lock(thread, jobs) {
+    for await (const job of jobs) {
+      this.processJob(job);
+    }
+  }
+
   queueList(reverse = false) {
     if (reverse) this.list.reverse();
+    
+    const jobs = this.getJob();
 
-    return list;
+    for (let i = 0; i < this.threads; i++) lock(i, jobs);
+
+    return this.list;
   }
 }
