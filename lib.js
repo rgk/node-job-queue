@@ -5,11 +5,11 @@ import os from 'os';
 const THREAD_COUNT = os.cpus().length;
 
 class JobQueue {
+  threads = THREAD_COUNT;
+  #index = 0;
+  output = [];
   constructor(list) {
     this.list = list;
-    this.index = 0;
-    this.threads = THREAD_COUNT;
-    this.output = [];
   }
 
   get list() {
@@ -31,7 +31,8 @@ class JobQueue {
     });
   }
 
-  queueList(list = this.list) {
+  queueList(reverse = false) {
+    if (reverse) this.#index = this.threads;
     return list;
   }
 }
