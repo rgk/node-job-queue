@@ -1,12 +1,14 @@
+import util from 'node:util';
 import { execFile } from 'child_process';
 
 import os from 'os';
+
+const execFilePromise = util.promisify(execFile);
 
 const THREAD_COUNT = os.cpus().length;
 
 class JobQueue {
   threads = THREAD_COUNT;
-  #index = 0;
   output = [];
   constructor(list) {
     this.list = list;
@@ -32,7 +34,8 @@ class JobQueue {
   }
 
   queueList(reverse = false) {
-    if (reverse) this.#index = this.threads;
+    if (reverse) this.list.reverse();
+
     return list;
   }
 }
