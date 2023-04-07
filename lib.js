@@ -38,9 +38,9 @@ class JobQueue {
     for (let i = 0; i < this.list.length; i++) yield this.list[i];
   }
 
-  lock(thread, jobs) {
+  async lock(thread, jobs) {
     for await (const job of jobs) {
-      this.processJob(job);
+      await this.processJob(job);
     }
   }
 
