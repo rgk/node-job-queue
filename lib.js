@@ -14,23 +14,12 @@ class JobQueue {
     this.list = list;
   }
 
-  get list() {
-    return this.list;
-  }
-  
-  set list(list) {
-    return this.list = list;
-  }
-
   // Methods
   processJob(job) {
-    console.info(job + ' started.');
     return execFilePromise(job, ['--queue'], (error, stdout, stderr) => {
       if (error) console.error(error);
 
       if (stdout || stderr) this.output[job] = stdout || stderr;
-
-      console.info(job + ' finished.');
     });
   }
 
@@ -40,7 +29,9 @@ class JobQueue {
 
   async lock(thread, jobs) {
     for await (const job of jobs) {
+      console.info('thread: ' + thread + ' | ' + job + ' started.');
       await this.processJob(job);
+      console.info('thread: ' + thread + ' | ' + job + ' finished.');
     }
   }
 
@@ -49,7 +40,7 @@ class JobQueue {
     
     const jobs = this.getJob();
 
-    for (let i = 0; i < this.threads; i++) lock(i, jobs);
+    for (let i = 0; i < this.threads; i++) this.lock(i, jobs);
 
     return this.list;
   }
