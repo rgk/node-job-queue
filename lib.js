@@ -9,11 +9,8 @@ const THREAD_COUNT = os.cpus().length;
 
 class JobQueue {
   threads = THREAD_COUNT;
+  options = {};
   output = [];
-
-  cwd = false;
-  timeout = false;
-  maxBuffer = false;
 
   constructor(list) {
     this.list = list;
@@ -21,18 +18,14 @@ class JobQueue {
 
   // Methods
   processJob(job) {
-    return execFilePromise(job, ['--queue'], {
-      ...this.cwd && { cwd: this.cwd },
-      ...this.timeout && { timeout: this.timeout },
-      ...this.maxBuffer && { maxBuffer: this.maxBuffer },
-    }, (error, stdout, stderr) => {
+    return execFilePromise(job, ['--queue'], this.options, (error, stdout, stderr) => {
       if (error) console.error(error);
 
       if (stdout || stderr) this.output[job] = stdout || stderr;
     });
   }
 
-  async *getJob() {
+  async *#getJob() {
     for (let i = 0; i < this.list.length; i++) yield this.list[i];
   }
 
@@ -47,7 +40,7 @@ class JobQueue {
   queueList(reverse = false) {
     if (reverse) this.list.reverse();
     
-    const jobs = this.getJob();
+    const jobs = this.#getJob();
 
     for (let i = 0; i < this.threads; i++) this.lock(i, jobs);
 
