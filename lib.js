@@ -1,9 +1,7 @@
 import util from 'node:util';
-import { execFile } from 'child_process';
+import { fork } from 'child_process';
 
 import os from 'os';
-
-const execFilePromise = util.promisify(execFile);
 
 const THREAD_COUNT = os.cpus().length;
 
@@ -18,7 +16,7 @@ class JobQueue {
 
   // Methods
   processJob(job) {
-    return execFilePromise(job, ['--queue'], this.options, (error, stdout, stderr) => {
+    return fork(job, ['--queue'], this.options, (error, stdout, stderr) => {
       if (error) console.error(error);
 
       if (stdout || stderr) this.output[job] = stdout || stderr;
