@@ -7,7 +7,7 @@ const THREAD_COUNT = os.cpus().length;
 
 class JobQueue {
   threads = THREAD_COUNT;
-  options = {};
+  options = { silent: true };
   output = [];
 
   constructor(list) {
@@ -16,11 +16,18 @@ class JobQueue {
 
   // Methods
   processJob(job) {
-    return fork(job, ['--queue'], this.options, (error, stdout, stderr) => {
-      if (error) console.error(error);
+    return new Promise((resolve, reject) => {
+      const process = fork(job, ['--queue'], this.options);
 
-      if (stdout || stderr) this.output[job] = stdout || stderr;
-    });
+      this.output[job] = [];
+
+      process.stdout.on('data', (data) => {
+        this.output[job].push(data);
+      });
+
+      process.on('error', reject);
+      process.on('exit', resolve);
+    })
   }
 
   async *#getJob() {
