@@ -21,7 +21,7 @@ class JobQueue {
 
       this.output[job] = [];
 
-      process.stdout.on('data', (data) => {
+      process.stdout?.on('data', (data) => {
         this.output[job].push(data);
       });
 
@@ -42,13 +42,15 @@ class JobQueue {
     }
   }
 
-  queueList(reverse = false) {
+  async run(reverse = false) {
     if (reverse) this.list.reverse();
     
     const jobs = this.#getJob();
 
-    for (let i = 0; i < this.threads; i++) this.lock(i, jobs);
+    const thread = [];
 
-    return this.list;
+    for (let i = 1; i <= this.threads; i++) thread[i] = this.lock(i, jobs);
+
+    return Promise.all(thread);
   }
 }
