@@ -16,19 +16,19 @@ class JobQueue {
   }
 
   // Methods
-  processJob(job) {
+  processJob(job, thread) {
     return new Promise((resolve, reject) => {
       const process = fork(job, ['--queue'], this.options);
 
-      this.output[job] = [];
+      this.#output[job] = [];
 
       process.stdout?.on('data', (data) => {
         this.#output[job].push(data);
       });
 
-      process.on('spawn', console.info(job + ' started.'));
+      process.on('spawn', () => console.info('thread: ' + thread + ' <|> ' + job + ' started.'));
       process.on('error', reject);
-      process.on('exit', console.info(job + ' finished.'));
+      process.on('exit', () => console.info('thread: ' + thread + ' <|> ' + job + ' finished.'));
       process.on('close', resolve);
     })
   }
@@ -40,8 +40,7 @@ class JobQueue {
   async lock(thread, jobs) {
     const registry = [];
     for await (const job of jobs) {
-      console.info('thread: ' + thread + ' <|>');
-      registry.push(await this.processJob(job));
+      registry.push(await this.processJob(job, thread));
     }
 
     return `Thread: ${thread} complete.`;
@@ -55,12 +54,14 @@ class JobQueue {
     return this.#output;
   }
 
-  async run(reverse = false) {
+  async run(reverse = false, clear = true) {
     if (reverse) this.list.reverse();
     
     const jobs = this.#getJob();
 
     const thread = [];
+
+    if (clear) this.clear();
 
     for (let i = 1; i <= this.threads; i++) thread[i] = this.lock(i, jobs);
 
