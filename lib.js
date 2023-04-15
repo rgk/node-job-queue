@@ -8,7 +8,8 @@ const THREAD_COUNT = os.cpus().length;
 class JobQueue {
   threads = THREAD_COUNT;
   options = { silent: true };
-  output = [];
+
+  #output = [];
 
   constructor(list) {
     this.list = list;
@@ -22,7 +23,7 @@ class JobQueue {
       this.output[job] = [];
 
       process.stdout?.on('data', (data) => {
-        this.output[job].push(data);
+        this.#output[job].push(data);
       });
 
       process.on('error', reject);
@@ -35,11 +36,22 @@ class JobQueue {
   }
 
   async lock(thread, jobs) {
+    const registry = [];
     for await (const job of jobs) {
       console.info('thread: ' + thread + ' | ' + job + ' started.');
-      await this.processJob(job);
+      registry.push(await this.processJob(job));
       console.info('thread: ' + thread + ' | ' + job + ' finished.');
     }
+
+    return `Thread: ${thread} complete.`;
+  }
+
+  clear() {
+    return this.#output = [];
+  }
+
+  result() {
+    return this.#output;
   }
 
   async run(reverse = false) {
