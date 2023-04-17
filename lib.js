@@ -5,7 +5,7 @@ import os from 'os';
 
 const THREAD_COUNT = os.cpus().length;
 
-class JobQueue {
+export class JobQueue {
   threads = THREAD_COUNT;
   options = { silent: true };
 
@@ -47,11 +47,11 @@ class JobQueue {
   }
 
   clear() {
-    return this.#output = [];
+    return this.#output.length = 0;
   }
 
   result() {
-    return this.#output;
+    return this.#output.slice();
   }
 
   async run(reverse = false, clear = true) {
