@@ -11,14 +11,15 @@ export class JobQueue {
 
   #output = null;
 
-  constructor(list) {
+  constructor(list, args = []) {
     this.list = list;
+    this.args = args;
   }
 
   // Methods
   processJob(job, thread) {
     return new Promise((resolve, reject) => {
-      const process = fork(job, ['--queue'], this.options);
+      const process = fork(job, this.args, this.options);
 
       this.#output[job] = [];
 
