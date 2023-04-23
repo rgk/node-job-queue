@@ -10,6 +10,7 @@ export class JobQueue {
   options = { silent: true };
 
   #output = null;
+  #error = null;
 
   constructor(list, args = []) {
     this.list = list;
@@ -22,9 +23,14 @@ export class JobQueue {
       const process = fork(job, this.args, this.options);
 
       this.#output[job] = [];
+      this.#error[job] = [];
 
       process.stdout?.on('data', (data) => {
         this.#output[job].push(data);
+      });
+      
+      process.stderr?.on('data', (data) => {
+        this.#error[job].push(data);
       });
 
       process.on('spawn', () => console.info('thread: ' + thread + ' <|> ' + job + ' started.'));
@@ -53,6 +59,10 @@ export class JobQueue {
 
   result() {
     return this.#output.slice();
+  }
+  
+  errors() {
+    return this.#error.slice();
   }
 
   async run(reverse = false, clear = true) {
