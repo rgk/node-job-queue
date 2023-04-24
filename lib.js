@@ -11,6 +11,7 @@ export class JobQueue {
 
   #output = null;
   #error = null;
+  #input = null;
 
   constructor(list, args = []) {
     this.list = list;
@@ -24,9 +25,14 @@ export class JobQueue {
 
       this.#output[job] = [];
       this.#error[job] = [];
+      this.#input[job] = [];
 
       process.stdout?.on('data', (data) => {
         this.#output[job].push(data);
+      });
+      
+      process.stdin?.on('data', (data) => {
+        this.#input[job].push(data);
       });
       
       process.stderr?.on('data', (data) => {
@@ -63,6 +69,10 @@ export class JobQueue {
   
   errors() {
     return this.#error.slice();
+  }
+  
+  input() {
+    return this.#input.slice();
   }
 
   async run(reverse = false, clear = true) {
