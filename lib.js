@@ -30,11 +30,11 @@ export class JobQueue {
       process.stdout?.on('data', (data) => {
         this.#output[job].push(data);
       });
-      
+
       process.stdin?.on('data', (data) => {
         this.#input[job].push(data);
       });
-      
+
       process.stderr?.on('data', (data) => {
         this.#error[job].push(data);
       });
@@ -66,18 +66,22 @@ export class JobQueue {
   result() {
     return this.#output.slice();
   }
-  
+
   errors() {
     return this.#error.slice();
   }
-  
+
   input() {
     return this.#input.slice();
   }
 
+  stringify(data) {
+    return JSON.stringify(data);
+  }
+
   async run(reverse = false, clear = true) {
     if (reverse) this.list.reverse();
-    
+
     const jobs = this.#getJob();
 
     const thread = [];
