@@ -4,6 +4,9 @@
   "description": "Simple node job queue.",
   "main": "index.js",
   "type": "module",
+  "scripts": {
+    "test": "node ./test.js",
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rgk/node-job-queue.git"
