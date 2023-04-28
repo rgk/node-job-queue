@@ -63,15 +63,15 @@ export class JobQueue {
     return this.#output.length = 0;
   }
 
-  result() {
+  output(convert = true) {
     return this.#output.slice();
   }
 
-  errors() {
+  errors(convert = true) {
     return this.#error.slice();
   }
 
-  input() {
+  input(convert = true) {
     return this.#input.slice();
   }
 
