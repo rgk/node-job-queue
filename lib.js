@@ -13,9 +13,10 @@ export class JobQueue {
   #error = null;
   #input = null;
 
-  constructor(list, args = []) {
+  constructor(list, args = [], options = {}) {
     this.list = list;
     this.args = args;
+    this.options = { ...this.options, ...options };
   }
 
   // Methods
