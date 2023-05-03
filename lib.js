@@ -7,7 +7,12 @@ const THREAD_COUNT = os.cpus().length;
 
 export class JobQueue {
   threads = THREAD_COUNT;
-  options = { silent: true, windowsHide: true };
+  options = {
+    silent: true,
+    windowsHide: true,
+    signal: true,
+    timeout: 99999
+  };
 
   #output = null;
   #error = null;
