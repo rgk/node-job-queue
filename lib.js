@@ -85,6 +85,10 @@ export class JobQueue {
     return JSON.stringify(data);
   }
 
+  watch(promises) {
+    return Promise.allSettled(promises);
+  }
+
   async run(reverse = false, clear = true) {
     if (reverse) this.list.reverse();
 
