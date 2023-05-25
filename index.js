@@ -10,4 +10,4 @@ const queue = new JobQueue(files, args);
 
 await queue.run();
 
-console.log(queue.result());
+console.log(queue.output());
