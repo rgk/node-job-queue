@@ -1,6 +1,8 @@
 import util from 'node:util';
 import { fork } from 'child_process';
 
+import { StringDecoder } from 'node:string_decoder'; 
+
 import os from 'os';
 
 const THREAD_COUNT = os.cpus().length;
@@ -17,11 +19,14 @@ export class JobQueue {
   #output = null;
   #error = null;
   #input = null;
+  #decoder = null;
 
   constructor(list, args = [], options = {}) {
     this.list = list;
     this.args = args;
     this.options = { ...this.options, ...options };
+    
+    this.#decoder = new StringDecoder('utf8');
   }
 
   // Methods
@@ -82,7 +87,7 @@ export class JobQueue {
   }
 
   stringify(data) {
-    return JSON.stringify(data);
+    return this.#decoder(data);
   }
 
   watch(promises) {
