@@ -4,6 +4,9 @@
   "description": "Simple node job queue.",
   "main": "index.js",
   "type": "module",
+  "engine": {
+    "node": ">=18"
+  },
   "scripts": {
     "test": "node ./test.js"
   },
